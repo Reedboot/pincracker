@@ -83,6 +83,8 @@ def main():
         print(center_text(f"{RED}{message}{RESET}"))
         return
 
+    print()
+    print()
     print(center_text("Oh no, here comes the hacker"))
     input(center_text("Press Enter to brute force the PIN."))
 
