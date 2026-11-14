@@ -83,6 +83,9 @@ def main():
         print(center_text(f"{RED}{message}{RESET}"))
         return
 
+    print(center_text("Oh no, here comes the hacker"))
+    input(center_text("Press Enter to brute force the PIN."))
+
     max_width = 6
     total = sum(10**width for width in range(1, max_width + 1))
     completed = 0
