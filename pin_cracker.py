@@ -85,6 +85,13 @@ def main():
 
     print()
     print()
+    for frame in ("|", "/", "-", "\\") * 3:
+        message = f"{RED}Hacker incoming {frame}{RESET}"
+        sys.stdout.write(f"\r\033[2K{center_text(message)}")
+        sys.stdout.flush()
+        time.sleep(0.15)
+    sys.stdout.write("\r\033[2K")
+    sys.stdout.flush()
     print(center_text("Oh no, here comes the hacker"))
     input(center_text("Press Enter to brute force the PIN."))
 
