@@ -60,7 +60,8 @@ def main():
     sys.stdout.flush()
 
     print(center_text(f"{CYAN}PIN CRACKER{RESET}"))
-    print(center_text(f"{CYAN}================{RESET}"))
+    print(center_text(f"{CYAN}--------------------{RESET}"))
+    print()
     print(center_text(f"{RED}For educational purposes only. Use only on PINs you own or are authorized to test.{RESET}"))
     print()
     print()
@@ -71,7 +72,10 @@ def main():
     ))
     print(center_text("Each digit has 10 choices (0-9), so calculate it as 10^6."))
     print(center_text("Searching PINs from 1 to 6 digits requires:"))
-    print(center_text("10^1 + 10^2 + 10^3 + 10^4 + 10^5 + 10^6 = 1,111,110 combinations."))
+    print(center_text(
+        f"10^1 + 10^2 + 10^3 + 10^4 + 10^5 + 10^6 = "
+        f"{GREEN}1,111,110{RESET} combinations."
+    ))
     print()
 
     prompt_text = "PIN (1 to 6 digits (0-9)) > "
@@ -92,7 +96,8 @@ def main():
         time.sleep(0.15)
     sys.stdout.write("\r\033[2K")
     sys.stdout.flush()
-    print(center_text("Oh no, here comes the hacker"))
+    print(center_text("Oh no, here comes the hacker!"))
+    print()
     print(center_text("How long do you think it will take to crack the Pin?"))
     input(center_text("Press Enter to brute force the PIN."))
 
