@@ -93,6 +93,7 @@ def main():
     sys.stdout.write("\r\033[2K")
     sys.stdout.flush()
     print(center_text("Oh no, here comes the hacker"))
+    print(center_text("How long do you think it will take to crack the Pin?"))
     input(center_text("Press Enter to brute force the PIN."))
 
     max_width = 6
