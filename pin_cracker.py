@@ -175,9 +175,9 @@ def main():
         sys.stdout.write("\a")
         sys.stdout.flush()
         time.sleep(0.2)
-    print(center_text("Oh no, the hacker is here!"))
+    print(center_text(f"{RED}Oh no, the hacker is here!{RESET}"))
     print()
-    print(center_text("How long do you think it will take to crack the Pin?"))
+    print(center_text(f"{CYAN}How long do you think it will take to crack the Pin?{RESET}"))
     print()
     input(center_text(f"{CYAN}Press Enter to brute force the PIN.{RESET}"))
 
