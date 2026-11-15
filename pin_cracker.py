@@ -1,4 +1,4 @@
-from getpass import getpass
+import os
 import re
 import shutil
 import sys
@@ -12,6 +12,64 @@ CYAN = "\033[36m"
 YELLOW = "\033[33m"
 
 pin = ""
+
+
+def get_masked_input(prompt):
+    characters = []
+
+    if os.name == "nt":
+        import msvcrt
+
+        sys.stdout.write(prompt)
+        sys.stdout.flush()
+        while True:
+            character = msvcrt.getwch()
+            if character in ("\r", "\n"):
+                break
+            if character == "\x03":
+                raise KeyboardInterrupt
+            if character in ("\x00", "\xe0"):
+                msvcrt.getwch()
+                continue
+            if character == "\b":
+                if characters:
+                    characters.pop()
+                    sys.stdout.write("\b \b")
+                    sys.stdout.flush()
+                continue
+            characters.append(character)
+            sys.stdout.write("*")
+            sys.stdout.flush()
+    else:
+        import termios
+        import tty
+
+        file_descriptor = sys.stdin.fileno()
+        original_settings = termios.tcgetattr(file_descriptor)
+        try:
+            tty.setcbreak(file_descriptor)
+            sys.stdout.write(prompt)
+            sys.stdout.flush()
+            while True:
+                character = sys.stdin.read(1)
+                if character in ("\r", "\n"):
+                    break
+                if character == "\x04":
+                    raise EOFError
+                if character in ("\b", "\x7f"):
+                    if characters:
+                        characters.pop()
+                        sys.stdout.write("\b \b")
+                        sys.stdout.flush()
+                    continue
+                characters.append(character)
+                sys.stdout.write("*")
+                sys.stdout.flush()
+        finally:
+            termios.tcsetattr(file_descriptor, termios.TCSADRAIN, original_settings)
+
+    sys.stdout.write("\n")
+    return "".join(characters)
 
 
 def center_text(text):
@@ -35,7 +93,7 @@ def search_pins_of_width(width, completed, total, started_at):
                 f"{progress:.1%}"
             )
             sys.stdout.write(
-                f"\r{center_text(progress_text).replace(progress_text, '')}"
+                f"\r\r{center_text(progress_text).replace(progress_text, '')}"
                 f"{CYAN}Progress: {GREEN}{'#' * filled}"
                 f"{'-' * (bar_width - filled)}{RESET} {progress:.1%}"
             )
@@ -44,10 +102,15 @@ def search_pins_of_width(width, completed, total, started_at):
         if candidate == pin:
             elapsed = time.perf_counter() - started_at
             print()
+            print()
             print(center_text(f"{YELLOW}PIN found!{RESET}"))
-            print(center_text(f"PIN: {pin}"))
+            print()
+            print(center_text(f"PIN: {GREEN}{pin}{RESET}"))
+            print()
             print(center_text(f"Attempts: {completed:,}"))
             print(center_text(f"Elapsed time: {elapsed:.2f} seconds"))
+            print()
+            print()
             raise SystemExit
 
     return completed
@@ -81,7 +144,7 @@ def main():
     prompt_text = "PIN (1 to 6 digits (0-9)) > "
     prompt = f"{CYAN}{prompt_text}{RESET}"
     centered_prompt = center_text(prompt_text).replace(prompt_text, prompt)
-    pin = getpass(centered_prompt)
+    pin = get_masked_input(centered_prompt)
     if not (1 <= len(pin) <= 6 and pin.isascii() and pin.isdigit()):
         message = "PIN must contain 1 to 6 digits (0-9)."
         print(center_text(f"{RED}{message}{RESET}"))
@@ -96,7 +159,11 @@ def main():
         time.sleep(0.15)
     sys.stdout.write("\r\033[2K")
     sys.stdout.flush()
-    print(center_text("Oh no, here comes the hacker!"))
+    for _ in range(3):
+        sys.stdout.write("\a")
+        sys.stdout.flush()
+        time.sleep(0.2)
+    print(center_text("Oh no, the hacker is here!"))
     print()
     print(center_text("How long do you think it will take to crack the Pin?"))
     input(center_text("Press Enter to brute force the PIN."))
