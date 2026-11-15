@@ -17,6 +17,11 @@ pin = ""
 def get_masked_input(prompt):
     characters = []
 
+    def has_six_digit_pin():
+        return len(characters) == 6 and all(
+            character in "0123456789" for character in characters
+        )
+
     if os.name == "nt":
         import msvcrt
 
@@ -40,6 +45,8 @@ def get_masked_input(prompt):
             characters.append(character)
             sys.stdout.write("*")
             sys.stdout.flush()
+            if has_six_digit_pin():
+                break
     else:
         import termios
         import tty
@@ -65,6 +72,8 @@ def get_masked_input(prompt):
                 characters.append(character)
                 sys.stdout.write("*")
                 sys.stdout.flush()
+                if has_six_digit_pin():
+                    break
         finally:
             termios.tcsetattr(file_descriptor, termios.TCSADRAIN, original_settings)
 
@@ -122,10 +131,13 @@ def main():
     sys.stdout.write("\033[2J\033[H")
     sys.stdout.flush()
 
+    print()
+    print()
     print(center_text(f"{CYAN}PIN CRACKER{RESET}"))
     print(center_text(f"{CYAN}--------------------{RESET}"))
     print()
-    print(center_text(f"{RED}For educational purposes only. Use only on PINs you own or are authorized to test.{RESET}"))
+    print(center_text(f"{RED}For educational purposes only.{RESET}"))
+    print(center_text(f"{RED}Use only on PINs you own or are authorized to test.{RESET}"))
     print()
     print()
     print(center_text(f"{CYAN}Instructions{RESET}"))
@@ -166,7 +178,8 @@ def main():
     print(center_text("Oh no, the hacker is here!"))
     print()
     print(center_text("How long do you think it will take to crack the Pin?"))
-    input(center_text("Press Enter to brute force the PIN."))
+    print()
+    input(center_text(f"{CYAN}Press Enter to brute force the PIN.{RESET}"))
 
     max_width = 6
     total = sum(10**width for width in range(1, max_width + 1))
